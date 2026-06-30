@@ -29,8 +29,17 @@ target_link_libraries(kira2diffeq PUBLIC
     ${CMAKE_THREAD_LIBS_INIT}
 )
 
+set_target_properties(kira2diffeq PROPERTIES POSITION_INDEPENDENT_CODE ON)
+
 add_executable(kira2diffeq-cli src/main.cpp)
 target_link_libraries(kira2diffeq-cli kira2diffeq ${CMAKE_THREAD_LIBS_INIT})
 
 enable_testing()
 add_subdirectory(tests)
+
+install(TARGETS kira2diffeq kira2diffeq-cli
+    RUNTIME DESTINATION bin
+    LIBRARY DESTINATION lib
+    ARCHIVE DESTINATION lib
+)
+install(DIRECTORY include/ DESTINATION include)
