@@ -1,0 +1,8 @@
+kinematics:
+  incoming_momenta: [p1]
+  outgoing_momenta: []
+  kinematic_invariants:
+    - [t, 2]
+  scalarproduct_rules:
+    - [ [p1, p1], 0 ]
+  symbol_to_replace_by_one: t

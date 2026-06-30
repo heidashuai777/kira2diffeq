@@ -1,0 +1,6 @@
+integralfamilies:
+  - name: cli_smoke
+    loop_momenta: [l1]
+    top_level_sectors: [1]
+    propagators:
+      - [l1, t]

@@ -1,0 +1,13 @@
+integralfamilies:
+  - name: "fctopology100C"
+    loop_momenta: [l1, l2]
+    top_level_sectors: [b1111100]
+    cut_propagators: [6, 7]
+    propagators:
+      - ["l2",       "0"]   # 1: l2^2
+      - ["l1+l2",    "0"]   # 2: (l1+l2)^2
+      - ["k2+l1",    "0"]   # 3: (k2+l1)^2
+      - ["l1-p2",    "0"]   # 4: (l1-p2)^2
+      - ["k2-l2",    "0"]   # 5: (k2-l2)^2
+      - ["k2*l1",    "0"]   # 6: k2.l1 (ISP, numerator)
+      - ["l2*p2",    "0"]   # 7: l2.p2 (ISP, numerator)

@@ -1,0 +1,9 @@
+The user defined environment variable FERMATPATH for Fermat is set:
+/opt/fermat/Ferl7/fer64
+The directories for the temporary files, result files and the sector mapping files are: 
+./tmp
+./results
+./sectormappings
+One variable is set to 1: {s==1}
+Kira prepares topology: fctopology100C and top level sector: 
+31 

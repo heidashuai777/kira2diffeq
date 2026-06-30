@@ -1,0 +1,11 @@
+# Build artifacts
+build/
+
+# Generated editor/worktree artifacts
+*.o
+*.so
+*.a
+*.exe
+
+# Generated test databases
+*.db

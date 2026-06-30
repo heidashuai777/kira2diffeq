@@ -1,0 +1,21 @@
+[12:39:56] === BENCHMARK ===
+[12:39:56] 
+[12:39:56] === 1. topo7_massless ===
+[12:39:56] Rules: 12871, Masters: 8
+  Time: 0.09 s, Mem: 13144 KB
+[12:39:56] Done.
+[12:39:56] 
+[12:39:56] === 2. sunrise ===
+[12:39:56] Rules: 1407, Masters: 3
+  Time: 0.01 s, Mem: 8732 KB
+[12:39:56] Done.
+[12:39:56] 
+[12:39:56] === 3. 1-loop box ===
+[12:39:56] Rules: 466, Masters: 5
+  Time: 0.04 s, Mem: 8800 KB
+[12:39:56] Done.
+[12:39:56] 
+[12:39:56] === ALL COMPLETE: Tue May 12 12:39:56 PM HKT 2026 ===
+-rw-r--r--. 1 Heidashuai Heidashuai 25318 May 12 12:39 benchmarks/box_1loop_de.m
+-rw-r--r--. 1 Heidashuai Heidashuai  1296 May 12 12:39 benchmarks/sunrise_de.m
+-rw-r--r--. 1 Heidashuai Heidashuai 30107 May 12 12:39 benchmarks/topo7_massless_de.m

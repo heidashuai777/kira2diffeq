@@ -1,0 +1,253 @@
+\documentclass[11pt,openany]{report}
+\usepackage[a4paper,margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{longtable}
+\usepackage{xcolor}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue,
+  urlcolor=blue,
+  pdftitle={kira2diffeq Manual},
+  pdfauthor={kira2diffeq}
+}
+
+\definecolor{docblue}{RGB}{0,61,153}
+\definecolor{docgray}{RGB}{245,245,245}
+
+\titleformat{\chapter}{\normalfont\Large\bfseries\color{docblue}}{\thechapter.}{0.5em}{}
+\titleformat{\section}{\normalfont\large\bfseries\color{docblue}}{\thesection}{0.5em}{}
+\titleformat{\subsection}{\normalfont\bfseries}{\thesubsection}{0.5em}{}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{kira2diffeq Manual}
+\fancyhead[R]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+\newcommand{\code}[1]{\texttt{#1}}
+
+\begin{document}
+
+\begin{titlepage}
+  \begin{center}
+    \vspace*{3cm}
+    {\Huge\bfseries kira2diffeq Manual}\\[1em]
+    {\large Differential equations from Kira reduction output}\\[2cm]
+    \rule{12cm}{0.5pt}\\[1cm]
+    {\large Project version: local repository guide}\\[0.8cm]
+    {\normalsize\today}\\[2cm]
+    \vfill
+  \end{center}
+\end{titlepage}
+
+\tableofcontents
+\clearpage
+
+\chapter{Project scope}
+kira2diffeq{} is a C++ utility that reads Kira-style reduction output and
+constructs differential equations for master integrals.
+
+It performs these operations:
+\begin{enumerate}
+  \item Read topology and kinematic configuration.
+  \item Parse \code{kira2math} reductions and \code{masters.final}.
+  \item Differentiate master integrals with respect to selected invariants.
+  \item Reduce shifted integrals back to masters.
+  \item Assemble and export DE matrices.
+\end{enumerate}
+
+This package does not perform diagram generation or IBP solving.
+
+\chapter{Build and verification}
+
+\section{Prerequisites}
+\begin{itemize}
+  \item CMake $\ge$ 3.16
+  \item GiNaC
+  \item yaml-cpp
+  \item A C++17 compiler
+\end{itemize}
+
+\section{Standard commands}
+\begin{verbatim}
+cd /path/to/kira2diffeq
+cmake -S . -B build
+cmake --build build -j4
+ctest --test-dir build --output-on-failure
+\end{verbatim}
+
+\section{Regression coverage}
+\begin{itemize}
+  \item \texttt{test\_sunrise}: parses config, reduction, differentiation, matrix assembly.
+  \item \texttt{cli\_smoke}: end-to-end CLI run using local fixtures.
+\end{itemize}
+
+\chapter{Command line usage}
+
+Executable: \code{build/kira2diffeq-cli}
+
+\section{Options}
+\begin{verbatim}
+Usage: kira2diffeq-cli [options]
+  -c <dir>   Config directory (integralfamilies.yaml, kinematics.yaml)
+  -m <file>  kira2math .m output file
+  -f <file>  masters.final file
+  -t <name>  Topology name
+  -v <var>   Kinematic variable (default: all)
+  -o <fmt>   Output: text | math | all (default: text)
+  -e         Use epsilon (d = 4 - 2*eps) in output
+  -O <file>  Write output to file instead of stdout
+  -h         Show this help
+\end{verbatim}
+
+\section{Example}
+\begin{verbatim}
+./build/kira2diffeq-cli \
+  -c tests/fixtures/cli_smoke \
+  -m tests/fixtures/cli_smoke/reduction.m \
+  -f tests/fixtures/cli_smoke/masters.final \
+  -t cli_smoke \
+  -v t \
+  -o text \
+  -O /tmp/cli_smoke_de.txt
+\end{verbatim}
+
+Output file is created when \code{-O} is given.
+
+\section{Output formats}
+\begin{itemize}
+  \item \code{text}: default, matrix form with $\mathrm{MI}_i$ notation.
+  \item \code{math}: Mathematica syntax blocks.
+  \item \code{all}: all variables in Mathematica format.
+  \item \code{-e}: substitutes \code{d -> 4 - 2 eps} in output.
+\end{itemize}
+
+\section{Debug trace}
+\code{differentiate\_master} is silent by default.
+Enable detailed logs with:
+\begin{verbatim}
+export KIRA2DIFFEQ_DEBUG=1
+./build/kira2diffeq-cli ...
+\end{verbatim}
+
+\chapter{Required inputs}
+
+\section{Configuration directory}
+\textbf{Required files:}
+\begin{itemize}
+  \item \code{kinematics.yaml}
+  \item \code{integralfamilies.yaml}
+\end{itemize}
+
+\section{kinematics.yaml}
+Expected structure:
+\begin{itemize}
+  \item incoming/outgoing momenta
+  \item kinematic invariants
+  \item scalarproduct rules
+  \item optional momentum conservation
+  \item optional \code{symbol\_to\_replace\_by\_one}
+\end{itemize}
+
+\section{integralfamilies.yaml}
+Expected entries:
+\begin{itemize}
+  \item topology \code{name}
+  \item \code{loop\_momenta}
+  \item \code{top\_level\_sectors}
+  \item \code{propagators}
+\end{itemize}
+
+Example snippets:
+\begin{verbatim}
+# standard propagator
+- ["l1+p1-k2", t]
+
+# bilinear ISP
+- {bilinear: [["k1", "l1"], 0]}
+\end{verbatim}
+
+\section{masters.final and reduction file}
+\code{masters.final} has one line per master, for example:
+\begin{verbatim}
+cli_smoke[1]
+\end{verbatim}
+
+\code{kira2math} lines map targets to linear sums of masters:
+\begin{verbatim}
+topo[1,2,0] -> +topo[0,1,0]*(1), +topo[1,1,0]*(-2)
+\end{verbatim}
+
+\chapter{Internal architecture}
+\begin{itemize}
+  \item \textbf{parser}: config and reduction data.
+  \item \textbf{differentiator}: derivative rules + Gram-chain substitutions.
+  \item \textbf{reducer}: map shifted integrals into master basis.
+  \item \textbf{exporter}: text and Mathematica output.
+\end{itemize}
+
+Core files:
+\begin{itemize}
+  \item \code{src/config\_reader.cpp}
+  \item \code{src/math\_parser.cpp}
+  \item \code{src/differentiator.cpp}
+  \item \code{src/reducer.cpp}
+  \item \code{src/exporter.cpp}
+  \item \code{src/main.cpp}
+\end{itemize}
+
+\chapter{Troubleshooting}
+
+\section{Missing reduction entries}
+Warning pattern:
+\begin{verbatim}
+Warning: integral X[...] not found in reduction table
+\end{verbatim}
+
+Interpretation: a shifted integral from differentiation is not reducible and not a master.
+
+Fix list:
+\begin{itemize}
+  \item add the missing reduction rule to \code{.m}
+  \item check topology name/ordering and propagator definitions
+  \item verify invariant symbols between config and reduction are identical
+\end{itemize}
+
+\section{Parser errors}
+\begin{itemize}
+  \item check YAML structure in both config files
+  \item ensure \code{kira2math} lines use the expected \code{target -> +master*(coeff)} form
+  \item verify the selected topology with \code{-t}
+\end{itemize}
+
+\chapter{Project-context notes}
+For a staged collinear workflow, keep regulated substitutions (for example \(p_{12}\))
+in intermediate algebra and only apply strict limits after cancellations and checks.
+
+\chapter{Quick project map}
+\begin{itemize}
+  \item \code{MANUAL.md}
+  \item \code{MANUAL.tex}
+  \item \code{CMakeLists.txt}
+  \item \code{tests/CMakeLists.txt}
+  \item \code{tests/fixtures/cli\_smoke/}
+  \item \code{src/} and \code{include/}
+\end{itemize}
+
+\chapter{Appendix}
+\section{Smoke workflow}
+\begin{verbatim}
+cmake --build build -j4
+./build/kira2diffeq-cli \
+  -c tests/fixtures/cli_smoke \
+  -m tests/fixtures/cli_smoke/reduction.m \
+  -f tests/fixtures/cli_smoke/masters.final \
+  -t cli_smoke -v t -o text -O /tmp/cli_smoke_de.txt
+\end{verbatim}
+
+\end{document}

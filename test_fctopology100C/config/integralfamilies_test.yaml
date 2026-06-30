@@ -1,0 +1,10 @@
+integralfamilies:
+  - name: "test"
+    loop_momenta: [l1, l2]
+    top_level_sectors: [31]
+    propagators:
+      - ["l2",       "0"]
+      - ["l1+l2",    "0"]
+      - ["k2+l1",    "0"]
+      - ["l1-p2",    "0"]
+      - ["k2-l2",    "0"]

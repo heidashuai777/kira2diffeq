@@ -1,0 +1,4 @@
+[10:51:35] === BENCHMARK START ===
+[10:51:35] 
+[10:51:35] === 1. topo7_massless ===
+[10:51:35] Rules: 12871, Masters: 8

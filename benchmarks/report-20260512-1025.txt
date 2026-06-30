@@ -1,0 +1,3 @@
+[10:25:23] === topo7_massless ===
+[10:25:23] Rules: 12871, Masters: 8
+[10:25:23] Running kira2diffeq...

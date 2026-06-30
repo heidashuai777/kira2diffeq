@@ -1,0 +1,3 @@
+auxiliary:
+ - name: "test"
+   permutation: [0,2,3,4,1]
