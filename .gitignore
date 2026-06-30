@@ -1,11 +1,29 @@
 # Build artifacts
 build/
+CMakeUserPresets.json
 
 # Generated editor/worktree artifacts
 *.o
 *.so
 *.a
 *.exe
+*.so.*
+*.dylib
+*.dll
+*.obj
+*.log
+*.aux
+*.out
+*.toc
+*.fdb_latexmk
+*.fls
+*.synctex.gz
+*.synctex(busy)
 
 # Generated test databases
 *.db
+*.db-journal
+
+# Local run artifacts
+kira.log
+test_fctopology100C/kira.log
